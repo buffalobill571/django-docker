@@ -1,0 +1,17 @@
+pgdata
+.idea/
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+env/
+.vscode
+app/public/stat/
+app/public/media/
+logs/
+backup/
+redis-4.0.1/
+app/public/media/**
+app/public/static/**
+trash/**
