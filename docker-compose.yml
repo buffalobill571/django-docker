@@ -6,24 +6,49 @@ services:
     command: bash -c "python /app/manage.py migrate --noinput && python /app/manage.py runserver 0.0.0.0:8000"
     environment:
       DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
+      RABBITMQ_URL: '${RABBITMQ_URL}'
     ports:
       - 8000:8000
     depends_on:
       - redis
       - postgres
       - adminer
+      - broker
+
+  celery:
+    build: .
+    command: bash -c "cd /app && celery -A config worker -l info"
+    environment:
+      DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
+      RABBITMQ_URL: '${RABBITMQ_URL}'
+    depends_on:
+      - redis
+      - postgres
+      - adminer
+      - broker
+
+  celery_beat:
+    build: .
+    command: bash -c "cd /app && celery -A config beat -l info"
+    environment:
+      DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
+      RABBITMQ_URL: '${RABBITMQ_URL}'
+    depends_on:
+      - redis
+      - postgres
+      - adminer
+      - broker
 
   redis:
     build:
       ./redis
 
-  amqp:
+  broker:
     build:
-      ./amqp
+      ./broker
     environment:
-      RABBITMQ_USER: '${RABBITMQ_USER}'
-      RABBITMQ_PASSWORD: '${RABBITMQ_PASSWORD}'
-      RABBITMQ_VHOST: '${RABBITMQ_VHOST}'
+      RABBITMQ_DEFAULT_USER: '${RABBITMQ_USER}'
+      RABBITMQ_DEFAULT_PASS: '${RABBITMQ_PASSWORD}'
 
   postgres:
     build:
@@ -35,7 +60,7 @@ services:
       DATABASE_USER: '${DATABASE_USER}'
       DATABASE_PASSWORD: '${DATABASE_PASSWORD}'
     volumes:
-      - pgdata:/var/lib/postgresql/data
+      - ./pgdata:/var/lib/postgresql/data
 
   adminer:
     build:
@@ -45,6 +70,3 @@ services:
       - 9999:8080
     depends_on:
       - postgres
-
-volumes:
-  pgdata:

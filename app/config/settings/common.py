@@ -218,10 +218,10 @@ LOGGING = {
         },
     },
     'loggers': {
-        'django.db.backends': {
-            'level': 'DEBUG',
-            'handlers': ['console'],
-        }
+        # 'django.db.backends': {
+        #     'level': 'DEBUG',
+        #     'handlers': ['console'],
+        # }
     },
     'root': {
         'level': 'INFO',
@@ -230,3 +230,20 @@ LOGGING = {
 }
 
 # EMAIL SETTINGS
+
+# CELERY
+CELERY_BROKER_URL = env('RABBITMQ_URL')
+CELERY_RESULT_BACKEND = env('RABBITMQ_URL')
+CELERY_ACCEPT_CONTENT = ['application/json']
+CELERY_TASK_SERIALIZER = 'json'
+CELERY_RESULT_SERIALIZER = 'json'
+
+from celery.schedules import crontab
+
+CELERY_BEAT_SCHEDULE = {
+    'hello': {
+        'task': 'apps.authentication.tasks.hello',
+        'args': ('Baha_config',),
+        'schedule': crontab()  # execute every minute
+    }
+}
