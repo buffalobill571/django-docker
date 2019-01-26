@@ -58,6 +58,8 @@ services:
     environment:
       RABBITMQ_DEFAULT_USER: '${RABBITMQ_USER}'
       RABBITMQ_DEFAULT_PASS: '${RABBITMQ_PASSWORD}'
+    volumes:
+      - ./dockerfiles/rabbitmq:/var/lib/rabbitmq/mnesia
 
   postgres:
     build:
@@ -69,7 +71,7 @@ services:
       DATABASE_USER: '${DATABASE_USER}'
       DATABASE_PASSWORD: '${DATABASE_PASSWORD}'
     volumes:
-      - ./pgdata:/var/lib/postgresql/data
+      - ./dockerfiles/pgdata:/var/lib/postgresql/data
 
   adminer:
     build:
