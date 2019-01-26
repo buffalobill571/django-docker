@@ -1,6 +1,8 @@
 from celery import shared_task
 from celery.schedules import crontab
 from celery.task import periodic_task
+from django.utils import timezone
+
 
 
 @shared_task

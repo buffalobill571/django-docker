@@ -4,11 +4,15 @@ services:
   app:
     build: .
     command: bash -c "python /app/manage.py migrate --noinput && python /app/manage.py runserver 0.0.0.0:8000"
+    stdin_open: true
+    tty: true
     environment:
       DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
       RABBITMQ_URL: '${RABBITMQ_URL}'
     ports:
       - 8000:8000
+    volumes:
+      - ./app:/app
     depends_on:
       - redis
       - postgres
@@ -18,6 +22,8 @@ services:
   celery:
     build: .
     command: bash -c "cd /app && celery -A config worker -l info"
+    stdin_open: true
+    tty: true
     environment:
       DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
       RABBITMQ_URL: '${RABBITMQ_URL}'
@@ -46,6 +52,8 @@ services:
   broker:
     build:
       ./broker
+    logging:
+      driver: none
     environment:
       RABBITMQ_DEFAULT_USER: '${RABBITMQ_USER}'
       RABBITMQ_DEFAULT_PASS: '${RABBITMQ_PASSWORD}'

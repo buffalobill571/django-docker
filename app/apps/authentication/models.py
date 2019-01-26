@@ -41,11 +41,12 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     first_name = models.CharField(max_length=40, blank=True)
     last_name = models.CharField(max_length=40, blank=True)
-    patronymic = models.CharField(max_length=40, blank=True)
+    phone = models.CharField(max_length=20, blank=True)
 
     date_joined = models.DateTimeField(default=timezone.now)
     is_superuser = models.BooleanField(default=False)
     is_admin = models.BooleanField(default=False)
+
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['first_name', 'last_name']
 
