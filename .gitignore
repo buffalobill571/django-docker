@@ -7,8 +7,8 @@ __pycache__/
 .Python
 env/
 .vscode
-app/public/stat/
-app/public/media/
+public/static/
+public/media/
 logs/
 backup/
 redis-4.0.1/

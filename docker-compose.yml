@@ -13,6 +13,7 @@ services:
       - 8000:8000
     volumes:
       - ./app:/app
+      - ./public:/public
     depends_on:
       - redis
       - postgres

@@ -17,7 +17,7 @@ import environ
 ROOT_DIR = environ.Path(__file__) - 3  # (/config/settings/common.py - 3 = /)
 PARENT_DIR = environ.Path(__file__) - 4
 APPS_DIR = ROOT_DIR.path('apps')
-public_root = ROOT_DIR.path('public')
+public_root = PARENT_DIR.path('public')
 
 
 env = environ.Env()  # set default values and casting
