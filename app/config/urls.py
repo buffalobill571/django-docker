@@ -31,6 +31,8 @@ patterns = [
     path('token-refresh/', refresh_jwt_token),
     path('token-verify/', verify_jwt_token),
 
+    path('authentication/', include('apps.authentication.urls')),
+
     path('swagger/', schema_view),
 ]
 

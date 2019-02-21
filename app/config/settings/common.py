@@ -10,7 +10,6 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/2.0/ref/settings/
 """
 import datetime
-import os
 import environ
 
 
@@ -33,7 +32,20 @@ SECRET_KEY = env("DJANGO_SECRET_KEY")
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = env.bool("DJANGO_DEBUG", False)
 
-ALLOWED_HOSTS = ['185.22.64.49', '127.0.0.1', 'localhost']
+# EMAIL SETTINGS TODO set another email host
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_HOST_USER = 'unilever.elefanto.smtp@gmail.com'
+EMAIL_HOST_PASSWORD = '`5-j^ch?NtPDmPR"'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+DEFAULT_FROM_EMAIL = 'Unilever <unilever.elefanto.smtp@gmail.com>'
+
+
+ALLOWED_HOSTS = [
+    '0.0.0.0',
+    '127.0.0.1',
+    'localhost',
+]
 
 INTERNAL_IPS = ['127.0.0.1', '::1', '185.22.64.49']
 
@@ -241,9 +253,4 @@ CELERY_RESULT_SERIALIZER = 'json'
 from celery.schedules import crontab
 
 CELERY_BEAT_SCHEDULE = {
-    'hello': {
-        'task': 'apps.authentication.tasks.hello',
-        'args': ('Baha_config',),
-        'schedule': crontab()  # execute every minute
-    }
 }

@@ -16,3 +16,5 @@ app/public/media/**
 app/public/static/**
 trash/**
 dockerfiles
+**/celerybeat-schedule
+**/celerybeat.pid

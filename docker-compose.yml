@@ -3,21 +3,22 @@ version: '3.1'
 services:
   app:
     build: .
-    command: bash -c "python /app/manage.py migrate --noinput && python /app/manage.py runserver 0.0.0.0:8000"
+    # TEST boot
+    command: bash -c "python /app/manage.py collectstatic -v0 --noinput && python /app/manage.py migrate --noinput && python /app/manage.py runserver 0.0.0.0:8000"
+    # PROD boot
+#    command: bash -c "python /app/manage.py collectstatic -v0 --noinput && python /app/manage.py migrate --noinput && cd /app && gunicorn config.wsgi --bind=0.0.0.0:8000 --workers=3"
     stdin_open: true
     tty: true
+    restart: always
     environment:
       DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
       RABBITMQ_URL: '${RABBITMQ_URL}'
-    ports:
-      - 8000:8000
     volumes:
       - ./app:/app
       - ./public:/public
     depends_on:
       - redis
       - postgres
-      - adminer
       - broker
 
   celery:
@@ -25,25 +26,31 @@ services:
     command: bash -c "cd /app && celery -A config worker -l info"
     stdin_open: true
     tty: true
+    restart: always
     environment:
       DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
       RABBITMQ_URL: '${RABBITMQ_URL}'
+    volumes:
+      - ./app:/app
+      - ./public:/public
     depends_on:
       - redis
       - postgres
-      - adminer
       - broker
 
   celery_beat:
     build: .
     command: bash -c "cd /app && celery -A config beat -l info"
+    restart: always
     environment:
       DJANGO_SETTINGS_MODULE: '${DJANGO_SETTINGS_MODULE}'
       RABBITMQ_URL: '${RABBITMQ_URL}'
+    volumes:
+      - ./app:/app
+      - ./public:/public
     depends_on:
       - redis
       - postgres
-      - adminer
       - broker
 
   redis:
@@ -55,6 +62,7 @@ services:
       ./broker
     logging:
       driver: none
+    restart: always
     environment:
       RABBITMQ_DEFAULT_USER: '${RABBITMQ_USER}'
       RABBITMQ_DEFAULT_PASS: '${RABBITMQ_PASSWORD}'
@@ -66,18 +74,26 @@ services:
       ./postgres
     restart: always
     environment:
-      POSTGRES_PASSWORD: 12345
       DATABASE_NAME: '${DATABASE_NAME}'
       DATABASE_USER: '${DATABASE_USER}'
       DATABASE_PASSWORD: '${DATABASE_PASSWORD}'
     volumes:
       - ./dockerfiles/pgdata:/var/lib/postgresql/data
 
-  adminer:
+#  adminer:
+#    build:
+#      ./adminer
+#    restart: always
+#    depends_on:
+#      - postgres
+
+  nginx:
     build:
-      ./adminer
+      ./nginx
     restart: always
+    env_file:
+      - ./nginx/.env
     ports:
-      - 9999:8080
-    depends_on:
-      - postgres
+      - "${NGINX_OUT_PORT}:80"
+    volumes:
+      - ./public:/public
