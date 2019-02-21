@@ -69,7 +69,7 @@ Then quit
 ```
 exit
 ```
-If you running on Linux, the files created by ```django-admin``` in container owned by ```root``
+If you running on Linux, the files created by ```django-admin``` in container owned by ```root```
 Change the ownership of new files
 ```
 sudo chown -R $USER:$USER app/
